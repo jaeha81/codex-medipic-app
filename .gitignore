@@ -48,3 +48,5 @@ data/intake-sessions.json
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel

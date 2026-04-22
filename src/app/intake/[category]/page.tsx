@@ -68,32 +68,32 @@ export default function IntakeCategoryPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-[#F3F6F1] flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto flex items-center gap-4">
-          <button
-            onClick={goBack}
-            disabled={session.currentQuestionIndex === 0}
-            className="p-2 rounded-xl hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex-shrink-0"
-            aria-label="Go back"
-          >
-            <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-          </button>
-
-          <div className="flex-1">
-            <ProgressBar
-              progress={progress}
-              current={session.currentQuestionIndex}
-              total={totalQuestions}
-              locale={locale === 'ko' ? 'en' : locale}
-            />
+      <header className="bg-white border-b border-gray-100 px-4 py-3 sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto">
+          {/* Top row: back + category + language */}
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={goBack}
+                disabled={session.currentQuestionIndex === 0}
+                className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                aria-label="Go back"
+              >
+                <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+              </button>
+              <Badge variant="primary">{categoryLabel}</Badge>
+            </div>
+            <LanguageSwitcher locale={locale} onChange={setLocale} variant="light" />
           </div>
-
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Badge variant="primary">{categoryLabel}</Badge>
-            <LanguageSwitcher locale={locale} onChange={setLocale} />
-          </div>
+          {/* Progress bar */}
+          <ProgressBar
+            progress={progress}
+            current={session.currentQuestionIndex}
+            total={totalQuestions}
+            locale={locale === 'ko' ? 'en' : locale}
+          />
         </div>
       </header>
 
