@@ -40,6 +40,8 @@ export const ko = {
     progress: '완료',
     typeAnswer: '답변을 입력하세요...',
     uploadHint: '탭하여 업로드 (JPG, PNG)',
+    uploading: '업로드 중...',
+    uploadError: '업로드에 실패했습니다. 다시 시도해 주세요.',
     agree: '위 내용에 동의합니다',
     height: '키 (cm)',
     weight: '체중 (kg)',

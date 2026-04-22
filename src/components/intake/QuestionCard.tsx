@@ -32,8 +32,16 @@ export function QuestionCard({ question, value, locale, t, onRespond, onNext, on
   const [uploadError, setUploadError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const questionText = locale === 'ja' ? question.textJa : question.textEn
-  const questionHint = locale === 'ja' ? question.hintJa : question.hintEn
+  const questionText = locale === 'ja'
+    ? question.textJa
+    : locale === 'ko'
+      ? (question.textKo ?? question.textEn)
+      : question.textEn
+  const questionHint = locale === 'ja'
+    ? question.hintJa
+    : locale === 'ko'
+      ? (question.hintKo ?? question.hintEn)
+      : question.hintEn
 
   const activeFlag = getActiveFlag(question, value)
   const isBlocked = activeFlag?.severity === 'block'
@@ -113,8 +121,9 @@ export function QuestionCard({ question, value, locale, t, onRespond, onNext, on
     const currentYear = new Date().getFullYear()
     const years = Array.from({ length: 100 }, (_, i) => currentYear - i)
     const days = Array.from({ length: 31 }, (_, i) => i + 1)
+    const intlLocale = locale === 'ja' ? 'ja-JP' : locale === 'ko' ? 'ko-KR' : 'en-US'
     const monthNames = Array.from({ length: 12 }, (_, i) =>
-      new Intl.DateTimeFormat(locale === 'ja' ? 'ja-JP' : 'en-US', { month: 'long' }).format(new Date(2000, i, 1))
+      new Intl.DateTimeFormat(intlLocale, { month: 'long' }).format(new Date(2000, i, 1))
     )
     function handleDatePart(part: 'y' | 'm' | 'd', val: string) {
       const y = part === 'y' ? val : (yyyy || '')
@@ -129,18 +138,18 @@ export function QuestionCard({ question, value, locale, t, onRespond, onNext, on
         <p className="text-xl sm:text-2xl font-bold text-gray-900 leading-snug">{questionText}</p>
         <div className="flex gap-2">
           <select value={yyyy} onChange={e => handleDatePart('y', e.target.value)} className={sel}>
-            <option value="">{locale === 'ja' ? '年' : 'Year'}</option>
-            {years.map(y => <option key={y} value={String(y)}>{locale === 'ja' ? `${y}年` : y}</option>)}
+            <option value="">{locale === 'ja' ? '年' : locale === 'ko' ? '년' : 'Year'}</option>
+            {years.map(y => <option key={y} value={String(y)}>{locale === 'ja' ? `${y}年` : locale === 'ko' ? `${y}년` : y}</option>)}
           </select>
           <select value={mm} onChange={e => handleDatePart('m', e.target.value)} className={sel}>
-            <option value="">{locale === 'ja' ? '月' : 'Month'}</option>
+            <option value="">{locale === 'ja' ? '月' : locale === 'ko' ? '월' : 'Month'}</option>
             {monthNames.map((name, i) => (
-              <option key={i + 1} value={String(i + 1)}>{locale === 'ja' ? `${i + 1}月` : name}</option>
+              <option key={i + 1} value={String(i + 1)}>{locale === 'ja' ? `${i + 1}月` : locale === 'ko' ? `${i + 1}월` : name}</option>
             ))}
           </select>
           <select value={dd} onChange={e => handleDatePart('d', e.target.value)} className={sel}>
-            <option value="">{locale === 'ja' ? '日' : 'Day'}</option>
-            {days.map(d => <option key={d} value={String(d)}>{locale === 'ja' ? `${d}日` : d}</option>)}
+            <option value="">{locale === 'ja' ? '日' : locale === 'ko' ? '일' : 'Day'}</option>
+            {days.map(d => <option key={d} value={String(d)}>{locale === 'ja' ? `${d}日` : locale === 'ko' ? `${d}일` : d}</option>)}
           </select>
         </div>
         <ActionRow onBack={onBack} onNext={onNext} canProceed={canProceed} isFirst={isFirst} isLast={isLast} t={t} />
@@ -177,12 +186,12 @@ export function QuestionCard({ question, value, locale, t, onRespond, onNext, on
         const res = await fetch('/api/upload', { method: 'POST', body: form })
         const data = await res.json() as { success: boolean; url?: string; error?: string }
         if (!res.ok || !data.success || !data.url) {
-          setUploadError('アップロードに失敗しました')
+          setUploadError(t.intake.uploadError ?? 'Upload failed')
         } else {
           onRespond(data.url)
         }
       } catch {
-        setUploadError('アップロードに失敗しました')
+        setUploadError(t.intake.uploadError ?? 'Upload failed')
       } finally {
         setUploading(false)
         // reset input so same file can be re-selected after error
@@ -208,7 +217,7 @@ export function QuestionCard({ question, value, locale, t, onRespond, onNext, on
             }
           </div>
           <span className="text-sm font-medium text-gray-600">
-            {uploading ? 'アップロード中...' : displayName ? displayName : t.intake.uploadHint}
+            {uploading ? (t.intake.uploading ?? 'Uploading...') : displayName ? displayName : t.intake.uploadHint}
           </span>
         </button>
         {uploadError && <p className="text-sm text-red-500 text-center">{uploadError}</p>}
@@ -254,7 +263,7 @@ export function QuestionCard({ question, value, locale, t, onRespond, onNext, on
         <p className="text-xl sm:text-2xl font-bold text-gray-900 leading-snug">{questionText}</p>
         <div className="space-y-2">
           {question.options?.map(opt => {
-            const label = locale === 'ja' ? opt.labelJa : opt.labelEn
+            const label = locale === 'ja' ? opt.labelJa : locale === 'ko' ? (opt.labelKo ?? opt.labelEn) : opt.labelEn
             const isSelected = selectedValues.includes(opt.value)
             return (
               <button key={opt.value} onClick={() => handleMultiToggle(opt.value)}

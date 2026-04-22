@@ -6,6 +6,7 @@ export interface QuestionOption {
   value: string
   labelEn: string
   labelJa: string
+  labelKo?: string
 }
 
 export interface ContraindicationRule {
@@ -13,6 +14,7 @@ export interface ContraindicationRule {
   severity: 'flag' | 'block'
   messageEn: string
   messageJa: string
+  messageKo?: string
 }
 
 export interface Question {
@@ -20,8 +22,10 @@ export interface Question {
   type: QuestionType
   textEn: string
   textJa: string
+  textKo?: string
   hintEn?: string
   hintJa?: string
+  hintKo?: string
   options?: QuestionOption[]
   required: boolean
   contraindicationRules?: ContraindicationRule[]

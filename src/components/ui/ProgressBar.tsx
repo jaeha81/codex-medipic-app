@@ -1,13 +1,19 @@
+import type { Locale } from '@/i18n'
+
 interface ProgressBarProps {
   progress: number
   current: number
   total: number
-  locale?: 'en' | 'ja'
+  locale?: Locale
 }
 
 export function ProgressBar({ progress, current, total, locale = 'en' }: ProgressBarProps) {
   const pct = Math.round(progress * 100)
-  const label = locale === 'ja' ? `${current} / ${total} 完了` : `${current} / ${total} completed`
+  const label = locale === 'ja'
+    ? `${current} / ${total} 完了`
+    : locale === 'ko'
+      ? `${current} / ${total} 완료`
+      : `${current} / ${total} completed`
   return (
     <div className="w-full space-y-1.5">
       <div className="flex items-center justify-between text-sm text-gray-500">

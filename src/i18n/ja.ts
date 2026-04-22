@@ -40,6 +40,8 @@ export const ja: Translations = {
     progress: '完了',
     typeAnswer: '入力してください...',
     uploadHint: 'タップしてアップロード（JPG・PNG）',
+    uploading: 'アップロード中...',
+    uploadError: 'アップロードに失敗しました。再度お試しください。',
     agree: '上記に同意する',
     height: '身長 (cm)',
     weight: '体重 (kg)',

@@ -63,7 +63,11 @@ export default function IntakeCategoryPage({ params }: PageProps) {
   const activeFlag = getActiveFlag(currentQuestion, currentResponse)
   const hasBlock = session.riskFlags.some(f => f.severity === 'block')
 
-  const categoryLabel = locale === 'ja' ? categoryData.labelJa : categoryData.labelEn
+  const categoryLabel = locale === 'ja'
+    ? categoryData.labelJa
+    : locale === 'ko'
+      ? categoryData.labelKo
+      : categoryData.labelEn
 
   return (
     <div className="min-h-screen bg-[#F3F6F1] flex flex-col">
@@ -92,7 +96,7 @@ export default function IntakeCategoryPage({ params }: PageProps) {
             progress={progress}
             current={session.currentQuestionIndex}
             total={totalQuestions}
-            locale={locale === 'ko' ? 'en' : locale}
+            locale={locale}
           />
         </div>
       </header>

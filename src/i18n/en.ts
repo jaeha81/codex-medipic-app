@@ -38,6 +38,8 @@ export const en = {
     progress: 'completed',
     typeAnswer: 'Type your answer...',
     uploadHint: 'Tap to upload (JPG, PNG)',
+    uploading: 'Uploading...',
+    uploadError: 'Upload failed. Please try again.',
     agree: 'I agree to the above',
     height: 'Height (cm)',
     weight: 'Weight (kg)',

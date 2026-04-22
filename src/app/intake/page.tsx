@@ -42,8 +42,8 @@ export default function IntakePage() {
 
         <div className="grid grid-cols-2 gap-4">
           {CATEGORIES.map((cat, i) => {
-            const label = locale === 'ja' ? cat.labelJa : cat.labelEn
-            const subtitle = locale === 'ja' ? cat.subtitleJa : cat.subtitleEn
+            const label = locale === 'ja' ? cat.labelJa : locale === 'ko' ? cat.labelKo : cat.labelEn
+            const subtitle = locale === 'ja' ? cat.subtitleJa : locale === 'ko' ? cat.subtitleKo : cat.subtitleEn
 
             return (
               <Link

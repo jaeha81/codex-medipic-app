@@ -11,7 +11,11 @@ interface ContraindicationBannerProps {
 }
 
 export function ContraindicationBanner({ rule, locale, t, onBack }: ContraindicationBannerProps) {
-  const message = locale === 'ja' ? rule.messageJa : rule.messageEn
+  const message = locale === 'ja'
+    ? rule.messageJa
+    : locale === 'ko'
+      ? (rule.messageKo ?? rule.messageEn)
+      : rule.messageEn
 
   if (rule.severity === 'block') {
     return (
