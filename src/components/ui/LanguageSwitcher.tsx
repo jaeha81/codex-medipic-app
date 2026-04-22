@@ -19,7 +19,7 @@ export function LanguageSwitcher({ locale, onChange }: LanguageSwitcherProps) {
             locale === l ? 'bg-white text-gray-900' : 'text-white/70 hover:text-white',
           ].join(' ')}
         >
-          {l === 'en' ? 'EN' : l === 'ja' ? 'JP' : '한'}
+          {l === 'en' ? 'EN' : l === 'ja' ? 'JP' : 'KR'}
         </button>
       ))}
     </div>
