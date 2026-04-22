@@ -4,13 +4,15 @@ import { useState } from 'react'
 import { LineLoginButton } from '@/components/ui/LineLoginButton'
 import { useLINE } from '@/hooks/useLINE'
 import type { Translations } from '@/i18n/en'
+import type { Locale } from '@/i18n'
 
 interface BookingSlotsProps {
   t: Translations
+  locale?: Locale
   sessionId?: string
 }
 
-export function BookingSlots({ t, sessionId = 'unknown' }: BookingSlotsProps) {
+export function BookingSlots({ t, locale, sessionId = 'unknown' }: BookingSlotsProps) {
   const [selected, setSelected] = useState<number | null>(null)
   const [confirmed, setConfirmed] = useState(false)
   const [notifyLoading, setNotifyLoading] = useState(false)
@@ -153,6 +155,15 @@ export function BookingSlots({ t, sessionId = 'unknown' }: BookingSlotsProps) {
       </LineLoginButton>
 
       <p className="text-xs text-center text-gray-400">{t.booking.note}</p>
+
+      {/* 결제 안내 */}
+      <p className="text-xs text-center text-gray-400 mt-1">
+        {locale === 'ko'
+          ? '예약 확정 후 약품 결제를 진행해주세요'
+          : locale === 'ja'
+          ? '予約確定後、お薬のお支払いをお進みください'
+          : 'Proceed to medication payment after booking is confirmed'}
+      </p>
     </div>
   )
 }

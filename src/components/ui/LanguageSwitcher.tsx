@@ -10,7 +10,7 @@ interface LanguageSwitcherProps {
 export function LanguageSwitcher({ locale, onChange }: LanguageSwitcherProps) {
   return (
     <div className="flex items-center gap-1 bg-white/10 rounded-full p-1">
-      {(['en', 'ja'] as Locale[]).map(l => (
+      {(['en', 'ja', 'ko'] as Locale[]).map(l => (
         <button
           key={l}
           onClick={() => onChange(l)}
@@ -19,7 +19,7 @@ export function LanguageSwitcher({ locale, onChange }: LanguageSwitcherProps) {
             locale === l ? 'bg-white text-gray-900' : 'text-white/70 hover:text-white',
           ].join(' ')}
         >
-          {l === 'en' ? 'EN' : 'JP'}
+          {l === 'en' ? 'EN' : l === 'ja' ? 'JP' : '한'}
         </button>
       ))}
     </div>

@@ -1,4 +1,5 @@
-export type Locale = 'en' | 'ja'
+export type Locale = 'en' | 'ja' | 'ko'
 export { en } from './en'
 export { ja } from './ja'
+export { ko } from './ko'
 export type { Translations } from './en'

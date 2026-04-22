@@ -28,6 +28,7 @@ export default function DoctorDetailPage({ params }: PageProps) {
   const [note, setNote] = useState('')
   const [status, setStatus] = useState<string>('pending')
   const [saved, setSaved] = useState(false)
+  const [lineToast, setLineToast] = useState<string | null>(null)
 
   useEffect(() => {
     fetch(`/api/intake/${sessionId}`)
@@ -56,6 +57,28 @@ export default function DoctorDetailPage({ params }: PageProps) {
         setSession(updated)
         setSaved(true)
         setTimeout(() => setSaved(false), 2000)
+
+        // 処方済に変更された場合 → LINE通知を自動送信
+        if (status === 'prescribed' && session) {
+          try {
+            const lineRes = await fetch('/api/line/notify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                type: 'prescription',
+                sessionId,
+                categoryId: session.categoryId,
+                doctorNote: note,
+              }),
+            })
+            if (lineRes.ok) {
+              setLineToast('✓ LINE通知を送信しました')
+              setTimeout(() => setLineToast(null), 2000)
+            }
+          } catch (err) {
+            console.error('[LINE notify] failed', err)
+          }
+        }
       }
     } finally {
       setSaving(false)
@@ -234,6 +257,10 @@ export default function DoctorDetailPage({ params }: PageProps) {
                 <>保存する</>
               )}
             </button>
+
+            {lineToast && (
+              <p className="text-center text-sm text-green-600 font-medium">{lineToast}</p>
+            )}
 
             <Link href="/doctor" className="block text-center text-sm text-gray-400 hover:text-gray-600 transition-colors">
               ← 一覧に戻る

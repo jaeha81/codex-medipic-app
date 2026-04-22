@@ -28,6 +28,8 @@ export function QuestionCard({ question, value, locale, t, onRespond, onNext, on
     typeof value === 'string' && value.includes('|') ? value.split('|')[1] : ''
   )
   const [consentChecked, setConsentChecked] = useState(value === 'agreed')
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const questionText = locale === 'ja' ? question.textJa : question.textEn
@@ -161,23 +163,62 @@ export function QuestionCard({ question, value, locale, t, onRespond, onNext, on
 
   // ── Upload ───────────────────────────────────────────────────────────────
   if (question.type === 'upload') {
-    const fileName = typeof value === 'string' && value ? value : null
+    const uploadedUrl = typeof value === 'string' && value ? value : null
+    const displayName = uploadedUrl ? uploadedUrl.split('/').pop() ?? uploadedUrl : null
+
+    async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+      const f = e.target.files?.[0]
+      if (!f) return
+      setUploading(true)
+      setUploadError(null)
+      try {
+        const form = new FormData()
+        form.append('file', f)
+        const res = await fetch('/api/upload', { method: 'POST', body: form })
+        const data = await res.json() as { success: boolean; url?: string; error?: string }
+        if (!res.ok || !data.success || !data.url) {
+          setUploadError('アップロードに失敗しました')
+        } else {
+          onRespond(data.url)
+        }
+      } catch {
+        setUploadError('アップロードに失敗しました')
+      } finally {
+        setUploading(false)
+        // reset input so same file can be re-selected after error
+        if (fileInputRef.current) fileInputRef.current.value = ''
+      }
+    }
+
     return (
       <div className="space-y-6">
         <p className="text-xl sm:text-2xl font-bold text-gray-900 leading-snug">{questionText}</p>
         {questionHint && <p className="text-sm text-gray-500">{questionHint}</p>}
-        <button onClick={() => fileInputRef.current?.click()}
-          className="w-full border-2 border-dashed border-gray-300 rounded-2xl p-8 flex flex-col items-center gap-3 hover:border-primary hover:bg-bg-warm transition-colors">
+        <button
+          onClick={() => !uploading && fileInputRef.current?.click()}
+          disabled={uploading}
+          className="w-full border-2 border-dashed border-gray-300 rounded-2xl p-8 flex flex-col items-center gap-3 hover:border-primary hover:bg-bg-warm transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+        >
           <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-            {fileName
-              ? <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-              : <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+            {uploading
+              ? <svg className="w-6 h-6 text-primary animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/></svg>
+              : uploadedUrl
+                ? <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                : <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
             }
           </div>
-          <span className="text-sm font-medium text-gray-600">{fileName ? fileName : t.intake.uploadHint}</span>
+          <span className="text-sm font-medium text-gray-600">
+            {uploading ? 'アップロード中...' : displayName ? displayName : t.intake.uploadHint}
+          </span>
         </button>
-        <input ref={fileInputRef} type="file" accept="image/jpeg,image/png" className="hidden"
-          onChange={e => { const f = e.target.files?.[0]; if (f) onRespond(f.name) }} />
+        {uploadError && <p className="text-sm text-red-500 text-center">{uploadError}</p>}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,application/pdf"
+          className="hidden"
+          onChange={handleFileChange}
+        />
         <ActionRow onBack={onBack} onNext={onNext} canProceed={canProceed} isFirst={isFirst} isLast={isLast} t={t} />
       </div>
     )

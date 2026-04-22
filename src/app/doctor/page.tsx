@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import type { StoredIntakeSession } from '@/lib/storage'
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -19,10 +20,20 @@ const CATEGORY_LABELS: Record<string, string> = {
 }
 
 export default function DoctorPortalPage() {
+  const router = useRouter()
   const [sessions, setSessions] = useState<StoredIntakeSession[]>([])
+  const [allSessions, setAllSessions] = useState<StoredIntakeSession[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>('all')
   const [catFilter, setCatFilter] = useState<string>('all')
+
+  // Fetch all sessions once for stats
+  useEffect(() => {
+    fetch('/api/intake')
+      .then(r => r.json())
+      .then(data => setAllSessions(data))
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     const params = new URLSearchParams()
@@ -35,10 +46,24 @@ export default function DoctorPortalPage() {
       .catch(() => setLoading(false))
   }, [filter, catFilter])
 
+  async function handleLogout() {
+    await fetch('/api/doctor/auth', { method: 'DELETE' })
+    router.push('/doctor/login')
+  }
+
   const counts = sessions.reduce((acc, s) => {
     acc[s.status] = (acc[s.status] ?? 0) + 1
     return acc
   }, {} as Record<string, number>)
+
+  // Stats based on all sessions (unfiltered)
+  const todayStr = new Date().toDateString()
+  const stats = {
+    total: allSessions.length,
+    pending: allSessions.filter(s => s.status === 'pending').length,
+    prescribed: allSessions.filter(s => s.status === 'prescribed').length,
+    today: allSessions.filter(s => new Date(s.submittedAt).toDateString() === todayStr).length,
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -101,16 +126,42 @@ export default function DoctorPortalPage() {
             </div>
           </nav>
 
-          <div className="px-6 py-4 border-t border-white/10">
-            <Link href="/" className="text-xs text-white/40 hover:text-white/70 transition-colors">
+          <div className="px-6 py-4 border-t border-white/10 space-y-2">
+            <Link href="/" className="block text-xs text-white/40 hover:text-white/70 transition-colors">
               ← Patient Site
             </Link>
+            <button
+              onClick={handleLogout}
+              className="w-full text-left text-xs text-red-400/70 hover:text-red-400 transition-colors"
+            >
+              ログアウト
+            </button>
           </div>
         </aside>
 
         {/* Main */}
         <main className="flex-1 p-8">
           <div className="max-w-4xl mx-auto">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-4 gap-4 mb-8">
+              <div className="bg-white rounded-2xl border border-gray-100 p-4">
+                <p className="text-xs text-gray-400 font-medium mb-1">全問診数</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-100 p-4">
+                <p className="text-xs text-yellow-600 font-medium mb-1">未確認</p>
+                <p className="text-2xl font-bold text-yellow-500">{stats.pending}</p>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-100 p-4">
+                <p className="text-xs text-green-600 font-medium mb-1">処方済</p>
+                <p className="text-2xl font-bold text-green-500">{stats.prescribed}</p>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-100 p-4">
+                <p className="text-xs text-gray-400 font-medium mb-1">本日の受付</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.today}</p>
+              </div>
+            </div>
+
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">問診一覧</h1>

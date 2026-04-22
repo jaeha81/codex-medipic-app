@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useLocale } from '@/hooks/useLocale'
 import { en } from '@/i18n/en'
 import { ja } from '@/i18n/ja'
+import { ko } from '@/i18n/ko'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { Hero } from '@/components/landing/Hero'
 import { CategoryCards } from '@/components/landing/CategoryCards'
@@ -11,7 +12,7 @@ import { HowItWorks } from '@/components/landing/HowItWorks'
 
 export default function HomePage() {
   const [locale, setLocale] = useLocale()
-  const t = locale === 'ja' ? ja : en
+  const t = locale === 'ja' ? ja : locale === 'ko' ? ko : en
 
   return (
     <div className="flex flex-col min-h-screen">

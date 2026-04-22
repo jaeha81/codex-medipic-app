@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useLocale } from '@/hooks/useLocale'
 import { en } from '@/i18n/en'
 import { ja } from '@/i18n/ja'
+import { ko } from '@/i18n/ko'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { CATEGORIES } from '@/data/categories'
 
@@ -16,7 +17,7 @@ const CATEGORY_IMAGES: Record<string, string> = {
 
 export default function IntakePage() {
   const [locale, setLocale] = useLocale()
-  const t = locale === 'ja' ? ja : en
+  const t = locale === 'ja' ? ja : locale === 'ko' ? ko : en
 
   return (
     <div className="min-h-screen bg-[#F3F6F1] flex flex-col">

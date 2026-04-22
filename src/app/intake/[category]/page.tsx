@@ -7,6 +7,7 @@ import { useLocale } from '@/hooks/useLocale'
 import { useIntake } from '@/hooks/useIntake'
 import { en } from '@/i18n/en'
 import { ja } from '@/i18n/ja'
+import { ko } from '@/i18n/ko'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Badge } from '@/components/ui/Badge'
@@ -25,7 +26,7 @@ export default function IntakeCategoryPage({ params }: PageProps) {
   const { category } = use(params)
   const router = useRouter()
   const [locale, setLocale] = useLocale()
-  const t = locale === 'ja' ? ja : en
+  const t = locale === 'ja' ? ja : locale === 'ko' ? ko : en
 
   const categoryId = category as CategoryId
   const questions = getQuestionsForCategory(categoryId)
@@ -85,7 +86,7 @@ export default function IntakeCategoryPage({ params }: PageProps) {
               progress={progress}
               current={session.currentQuestionIndex}
               total={totalQuestions}
-              locale={locale}
+              locale={locale === 'ko' ? 'en' : locale}
             />
           </div>
 
@@ -109,7 +110,11 @@ export default function IntakeCategoryPage({ params }: PageProps) {
               <div>
                 <h2 className="font-bold text-red-800 text-lg mb-2">{t.intake.contraindication_block_title}</h2>
                 <p className="text-red-700 leading-relaxed text-sm">
-                  {session.riskFlags.find(f => f.severity === 'block')?.[locale === 'ja' ? 'messageJa' : 'messageEn']}
+                  {(() => {
+                    const flag = session.riskFlags.find(f => f.severity === 'block')
+                    if (!flag) return null
+                    return locale === 'ja' ? flag.messageJa : flag.messageEn
+                  })()}
                 </p>
               </div>
             </div>
