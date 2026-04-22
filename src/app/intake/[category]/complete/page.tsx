@@ -1,6 +1,6 @@
 'use client'
 
-import { use } from 'react'
+import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useLocale } from '@/hooks/useLocale'
 import { en } from '@/i18n/en'
@@ -12,10 +12,54 @@ interface PageProps {
   params: Promise<{ category: string }>
 }
 
+const STORAGE_KEY = 'medipic_intake_session'
+
 export default function IntakeCompletePage({ params }: PageProps) {
-  use(params) // consume params (category not needed for UI)
+  use(params)
   const [locale, setLocale] = useLocale()
   const t = locale === 'ja' ? ja : en
+
+  const [submitted, setSubmitted] = useState(false)
+  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  // On mount: submit session data to API once
+  useEffect(() => {
+    const raw = sessionStorage.getItem(STORAGE_KEY)
+    if (!raw) return
+
+    try {
+      const session = JSON.parse(raw)
+      if (!session?.sessionId || !session?.categoryId) return
+
+      fetch('/api/intake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: session.sessionId,
+          categoryId: session.categoryId,
+          responses: session.responses ?? {},
+          riskFlags: session.riskFlags ?? [],
+        }),
+      })
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`)
+          return res.json()
+        })
+        .then(data => {
+          setSessionId(data.sessionId)
+          setSubmitted(true)
+          // clear session storage after successful submit
+          sessionStorage.removeItem(STORAGE_KEY)
+        })
+        .catch(err => {
+          console.error('[intake submit]', err)
+          setSubmitError('送信に失敗しました。もう一度お試しください。')
+        })
+    } catch {
+      /* ignore parse errors */
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-[#F3F6F1] flex flex-col">
@@ -39,6 +83,16 @@ export default function IntakeCompletePage({ params }: PageProps) {
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">{t.booking.title}</h1>
           <p className="text-gray-500 max-w-sm mx-auto">{t.booking.subtitle}</p>
+
+          {/* Submission status */}
+          {submitted && sessionId && (
+            <p className="mt-3 text-xs text-[#1D7A4A] font-medium">
+              ✓ {locale === 'ja' ? '問診が送信されました' : 'Intake submitted'} — ID: <code className="bg-gray-100 px-1 rounded">{sessionId.slice(-8)}</code>
+            </p>
+          )}
+          {submitError && (
+            <p className="mt-3 text-xs text-red-500">{submitError}</p>
+          )}
         </div>
 
         {/* Booking slots */}
@@ -55,7 +109,7 @@ export default function IntakeCompletePage({ params }: PageProps) {
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
-            Back to home
+            {locale === 'ja' ? 'トップに戻る' : 'Back to home'}
           </Link>
         </div>
       </main>

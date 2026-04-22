@@ -649,7 +649,9 @@ const SKINCARE_QUESTIONS: Question[] = [
 
 // ─── Export ──────────────────────────────────────────────────────────────────
 
-const CATEGORY_QUESTIONS: Record<CategoryId, Question[]> = {
+export const COMMON_QUESTIONS_EXPORT = COMMON_QUESTIONS
+
+export const CATEGORY_QUESTIONS: Record<CategoryId, Question[]> = {
   weight:    WEIGHT_QUESTIONS,
   hair:      HAIR_QUESTIONS,
   menopause: MENOPAUSE_QUESTIONS,
