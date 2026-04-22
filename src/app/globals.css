@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #1E60C8;
+  --color-primary-hover: #1650A8;
+  --color-accent-green: #1D7A4A;
+  --color-accent-green-hover: #166040;
+  --color-accent-green-light: #E8F5EE;
+  --color-line-green: #07B53B;
+  --color-line-green-hover: #059A31;
+  --color-bg-warm: #EAF0E6;
+  --color-bg-section: #EEF2EC;
+  --color-accent-purple: #E8EFF8;
+  --color-accent-blue: #E3EDF9;
+  --color-accent-teal: #E2F0ED;
+  --color-warning: #FEF3C7;
+  --color-warning-border: #F0C070;
+  --color-danger: #FEE2E2;
+  --color-danger-border: #FCA5A5;
+  --color-gray-soft: #F0F3EF;
+  --color-dark: #0A1C12;
+  --font-sans: 'Noto Sans JP', sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F3F6F1;
+  --foreground: #111827;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+button, a { transition: all 0.2s ease; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.animate-fadeInUp  { animation: fadeInUp  0.65s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-fadeIn    { animation: fadeIn    0.5s  ease-out both; }
+.animate-scaleIn   { animation: scaleIn   0.55s cubic-bezier(0.16,1,0.3,1) both; }
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+.will-animate { opacity: 0; }
