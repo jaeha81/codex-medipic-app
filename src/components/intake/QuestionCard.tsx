@@ -318,7 +318,7 @@ function ActionRow({ onBack, onNext, canProceed, isFirst, isLast, t }: {
       {!isFirst && (
         <Button variant="ghost" size="md" onClick={onBack}>← {t.intake.back}</Button>
       )}
-      <Button variant="primary" size="md" onClick={onNext} disabled={!canProceed} className="ml-auto">
+      <Button variant="primary" size="md" onClick={onNext} disabled={!canProceed || undefined} className="ml-auto">
         {isLast ? t.intake.complete : t.intake.next} →
       </Button>
     </div>
