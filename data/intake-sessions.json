@@ -1,0 +1,22 @@
+[
+  {
+    "sessionId": "intake_1776887937774_test01",
+    "categoryId": "weight",
+    "responses": {
+      "C-01": "1990-05-15",
+      "C-02": "kanto",
+      "C-03": "170:65",
+      "C-04": "none",
+      "C-05": "none",
+      "C-06": "none",
+      "C-07": [],
+      "W-01": "gain_5_10",
+      "W-02": "twice",
+      "W-03": "high_carb"
+    },
+    "riskFlags": [],
+    "submittedAt": "2026-04-22T19:59:00.830Z",
+    "status": "prescribed",
+    "doctorNote": "GLP-1処方可。週1回注射タイプを処方。3ヶ月後に再診。"
+  }
+]
