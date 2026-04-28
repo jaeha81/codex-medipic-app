@@ -93,7 +93,7 @@ export function HowItWorks({ t }: HowItWorksProps) {
   }, [])
 
   return (
-    <section className="bg-[#EEF2EC] py-20">
+    <section className="bg-[#EAF2EB] py-20">
       <div className="max-w-6xl mx-auto px-6">
 
         <div ref={headingRef} className="text-center mb-16">
@@ -110,8 +110,8 @@ export function HowItWorks({ t }: HowItWorksProps) {
           <div className="hidden sm:block absolute top-10 left-[calc(50%/3+2.5rem)] right-[calc(50%/3+2.5rem)] h-px bg-gray-200" />
 
           {t.howItWorks.steps.map((step, i) => (
-            <div key={i} className="journey-card flex flex-col items-center text-center">
-              <div className="relative z-10 w-20 h-20 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center mb-6 text-gray-600">
+            <div key={i} className="journey-card shine-card flex flex-col items-center text-center bg-white rounded-2xl p-6 border border-[#CFE4D5] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+              <div className="relative z-10 w-20 h-20 bg-[#F4FBF6] rounded-2xl shadow-sm border border-[#D4EBDD] flex items-center justify-center mb-6 text-[#2D5742]">
                 {STEP_ICONS[i]}
                 <span className="absolute -top-2 -right-2 w-6 h-6 bg-[#1D7A4A] text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow-sm">
                   {i + 1}
@@ -128,7 +128,7 @@ export function HowItWorks({ t }: HowItWorksProps) {
           {TRUST_ICONS.map((icon, i) => (
             <div
               key={i}
-              className="flex items-center gap-3 bg-white rounded-xl p-4 border border-gray-100 shadow-sm"
+              className="shine-card flex items-center gap-3 bg-white rounded-xl p-4 border border-[#D2E5D7] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
             >
               <div className="flex-shrink-0 text-[#1D7A4A]">{icon}</div>
               <span className="text-sm font-medium text-gray-700">
