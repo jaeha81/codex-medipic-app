@@ -19,5 +19,6 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - The user works across three PCs, so Codex must assume machine changes are normal.
 - Keep development repositories and runnable artifacts on each PC locally.
 - Keep shared operating knowledge, handoff notes, and cross-PC working state in the user's shared drive knowledge system.
+- Do not rely on repository-local session notes as the source of truth for cross-PC handoff.
 - When a session resumes or a PC changes, first reconcile the latest shared operating context before making major changes.
 - If local repo state and shared operating notes differ, surface the mismatch clearly and prefer the latest confirmed user intent plus the shared notes.
