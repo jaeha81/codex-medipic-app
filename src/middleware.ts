@@ -9,7 +9,9 @@ export function middleware(request: NextRequest) {
   }
 
   const token = request.cookies.get('medipic_doctor_token')
-  if (!token || token.value !== 'valid') {
+  const expectedToken = process.env.DOCTOR_SESSION_SECRET
+
+  if (!token || !expectedToken || token.value !== expectedToken) {
     const loginUrl = new URL('/doctor/login', request.url)
     return NextResponse.redirect(loginUrl)
   }

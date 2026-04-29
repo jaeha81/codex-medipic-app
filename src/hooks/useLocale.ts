@@ -5,20 +5,25 @@ import type { Locale } from '@/i18n'
 
 const STORAGE_KEY = 'medipic_locale'
 
+function getInitialLocale(): Locale {
+  if (typeof window === 'undefined') {
+    return 'en'
+  }
+
+  const saved = localStorage.getItem(STORAGE_KEY)
+  return saved === 'en' || saved === 'ja' ? saved : 'en'
+}
+
 export function useLocale(): [Locale, (l: Locale) => void] {
-  const [locale, setLocaleState] = useState<Locale>('en')
+  const [locale, setLocaleState] = useState<Locale>(getInitialLocale)
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY) as Locale | null
-    const initial = (saved === 'en' || saved === 'ja') ? saved : 'en'
-    setLocaleState(initial)
-    document.documentElement.lang = initial
-  }, [])
+    document.documentElement.lang = locale
+    localStorage.setItem(STORAGE_KEY, locale)
+  }, [locale])
 
   function setLocale(l: Locale) {
     setLocaleState(l)
-    localStorage.setItem(STORAGE_KEY, l)
-    document.documentElement.lang = l
   }
 
   return [locale, setLocale]
